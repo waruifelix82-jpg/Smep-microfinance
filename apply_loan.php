@@ -47,7 +47,7 @@ if (!isset($_SESSION['user_id'])) {
                         <option value="12">12 Months</option>
                     </select>
                 </div>
-
+                    // Business Available
                 <div class="form-group">
                     <label for="purpose">Purpose of Loan</label>
                     <select name="purpose" required>
