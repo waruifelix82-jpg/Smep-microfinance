@@ -6,13 +6,13 @@
     <title>Login Page</title>
 
   
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
     <div class="container">
         <h2>Login</h2>
-
+<form method="POST" action="login_process.php">
         <form>
             <label>Email</label>
             <input type="email" name="email" placeholder="Enter your email" required>
