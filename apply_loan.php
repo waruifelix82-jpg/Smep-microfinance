@@ -20,8 +20,9 @@ if (!isset($_SESSION['user_id'])) {
 <div class="user-wrapper">
    <nav class="user-nav">
     <div class="logo">SMEP <span>Mobile</span></div>
-    <a href="./dashboard.php">← Back to Dashboard</a></p>
-    
+   <button type="button" onclick="window.location.href='./dashboard.php'">
+    ← Back to Dashboard
+</button>
 </nav>
 
     <main class="apply-container">

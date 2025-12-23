@@ -24,6 +24,21 @@ body {
     background: #ffffff;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
+.back-btn {
+    display: inline-block; 
+    width: 250px;          
+    text-align: center;   
+    padding: 10px 0;       
+    text-decoration: none; 
+    background-color: #007bff;
+    color: rgb(5, 9, 246);
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    background-color: #0990f7; 
+    color: white;
+}
 
 .logo {
     font-size: 1.5rem;
