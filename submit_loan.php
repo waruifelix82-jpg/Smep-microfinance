@@ -1,39 +1,35 @@
 <?php
 session_start();
-include 'db_connect.php'; // Ensure you have your database connection file
-
-// 1. Security Check: Ensure only logged-in users can submit
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ./LOGIN/Index.php");
-    exit();
-}
+require_once 'config.php'; // Ensure this file exists and works!
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 2. Collect data from the form
-    $user_id  = $_SESSION['user_id'];
-    $amount   = mysqli_real_escape_string($conn, $_POST['amount']);
-    $duration = mysqli_real_escape_string($conn, $_POST['duration']);
-    $purpose  = mysqli_real_escape_string($conn, $_POST['purpose']);
-    
-    // 3. Simple Interest Calculation (Logic must match your frontend)
-    $interest_rate = 0.12; // 12%
-    $interest_amount = $amount * $interest_rate;
-    $total_repayable = $amount + $interest_amount;
-    
-    // 4. Set Initial Status
-    $status = "Pending";
+    $user_id = $_SESSION['user_id'];
+    $amount = $_POST['amount'];
+    $duration = $_POST['duration'];
+    $purpose = $_POST['purpose'];
 
-    // 5. Insert into Database
-    $sql = "INSERT INTO loans (user_id, amount, duration, interest, total_repayable, purpose, status) 
-            VALUES ('$user_id', '$amount', '$duration', '$interest_amount', '$total_repayable', '$purpose', '$status')";
+    // 1. Calculate totals
+    $interest = $amount * 0.12;
+    $total_payable = $amount + $interest;
 
-    if (mysqli_query($conn, $sql)) {
-        // Success! Redirect to User Dashboard with a success message
-        header("Location: user_dashboard.php?status=success");
+    // 2. Prepare the statement
+    $sql = "INSERT INTO loans (user_id, amount, duration, purpose, interest_amount, total_payable, status) VALUES (?, ?, ?, ?, ?, ?, 'Pending')";
+    
+    $stmt = $conn->prepare($sql);
+
+    // 3. CHECK IF PREPARE WORKED (This prevents the Line 11 error)
+    if ($stmt === false) {
+        die("Database Error: " . $conn->error); 
+    }
+
+    // 4. Bind and Execute
+    $stmt->bind_param("idissd", $user_id, $amount, $duration, $purpose, $interest, $total_payable);
+
+    if ($stmt->execute()) {
+        header("Location: dashboard.php?msg=success");
         exit();
     } else {
-        // Error handling
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        echo "Execution failed: " . $stmt->error;
     }
 }
 ?>
