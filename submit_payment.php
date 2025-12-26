@@ -3,47 +3,37 @@ session_start();
 require_once 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect data from the form
-    $loan_id = $_POST['loan_id'];
-    $amount_paid = $_POST['amount_paid'];
-    $transaction_ref = strtoupper($_POST['transaction_ref']); // Force M-Pesa code to Uppercase
+    // 1. Get the data from the form
+    $loan_id = intval($_POST['loan_id']);
+    $amount_paid = floatval($_POST['amount_paid']);
+    $transaction_ref = strtoupper($conn->real_escape_string($_POST['transaction_ref']));
     $user_id = $_SESSION['user_id'];
 
-    // STEP 1: Insert the payment record
-    $insert_query = "INSERT INTO payments (loan_id, user_id, amount_paid, transaction_ref) VALUES (?, ?, ?, ?)";
-    $stmt1 = $conn->prepare($insert_query);
-    $stmt1->bind_param("iids", $loan_id, $user_id, $amount_paid, $transaction_ref);
+    // 2. Insert into a "payments" table (History)
+    // Note: Make sure you have a table named 'payments'
+    $query_pay = "INSERT INTO payments (loan_id, user_id, amount_paid, transaction_ref, date_paid) VALUES (?, ?, ?, ?, NOW())";
+    $stmt_pay = $conn->prepare($query_pay);
+    $stmt_pay->bind_param("iids", $loan_id, $user_id, $amount_paid, $transaction_ref);
 
-    if ($stmt1->execute()) {
-        
-        // STEP 2: Subtract the amount from the loan's total_payable
-        $update_query = "UPDATE loans SET total_payable = total_payable - ? WHERE id = ?";
-        $stmt2 = $conn->prepare($update_query);
-        $stmt2->bind_param("di", $amount_paid, $loan_id);
-        $stmt2->execute();
+    if ($stmt_pay->execute()) {
+        // 3. Subtract the payment from the 'total_payable' in the 'loans' table
+        $query_update = "UPDATE loans SET total_payable = total_payable - ? WHERE id = ?";
+        $stmt_update = $conn->prepare($query_update);
+        $stmt_update->bind_param("di", $amount_paid, $loan_id);
+        $stmt_update->execute();
 
-        // STEP 3: Check if the loan is fully paid
-        $check_query = "SELECT total_payable FROM loans WHERE id = ?";
-        $stmt3 = $conn->prepare($check_query);
-        $stmt3->bind_param("i", $loan_id);
-        $stmt3->execute();
-        $result = $stmt3->get_result();
-        $loan_data = $result->fetch_assoc();
-
-        if ($loan_data['total_payable'] <= 0) {
-            // Mark as Settled if debt is gone
-            $settle_query = "UPDATE loans SET status = 'Settled', total_payable = 0 WHERE id = ?";
-            $stmt4 = $conn->prepare($settle_query);
-            $stmt4->bind_param("i", $loan_id);
-            $stmt4->execute();
+        // 4. Check if the loan is fully paid
+        $check_bal = $conn->query("SELECT total_payable FROM loans WHERE id = $loan_id")->fetch_assoc();
+        if ($check_bal['total_payable'] <= 0) {
+            // Set balance to 0 and mark as Cleared
+            $conn->query("UPDATE loans SET total_payable = 0, status = 'Cleared' WHERE id = $loan_id");
         }
 
-        // Send the user back to the dashboard with a success message
-        header("Location: dashboard.php?msg=payment_success");
+        // 5. Success! Go back to the dashboard
+        header("Location: Repay_loan.php?msg=success");
         exit();
-
     } else {
-        echo "Error processing payment: " . $conn->error;
+        echo "Error recording payment: " . $conn->error;
     }
 }
 ?>

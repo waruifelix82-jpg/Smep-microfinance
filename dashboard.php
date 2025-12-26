@@ -20,7 +20,7 @@
             <a href="#about">Home</a>
             <a href="#services">What We Do</a>
              <a href="./apply_loan.php" class="btn-apply_loan">Apply for a loan</a>
-             <a href="./Repay_loan.php" class="btn-Repay">Repay loan</a>
+             <a href="./repay_loan.php" class="btn-Repay">Repay loan</a>
             <a href="./LOGIN/Index.php" class="btn-login">Login</a>
             <a href="./register.php" class="btn-register">Join Us</a>
             

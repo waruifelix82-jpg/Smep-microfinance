@@ -2,15 +2,17 @@
 session_start();
 require_once 'config.php'; 
 
-// Search Logic
+// 1. Search Logic (Fixed with SQL Security)
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $search_query = "";
 if (!empty($search)) {
-    $search_query = " WHERE clients_info.first_name LIKE '%$search%' ";
+    $safe_search = $conn->real_escape_string($search);
+    $search_query = " WHERE clients_info.first_name LIKE '%$safe_search%' ";
 }
 
-// Fetch loans with optional search
-$sql = "SELECT loans.id, clients_info.first_name, loans.amount, loans.status FROM loans 
+// 2. FIXED SQL: We rename loans.id to 'loan_id' so it doesn't clash with clients_info.id
+$sql = "SELECT loans.id AS loan_id, clients_info.first_name, loans.amount, loans.status 
+        FROM loans 
         JOIN clients_info ON loans.user_id = clients_info.id 
         $search_query
         ORDER BY loans.id DESC";
@@ -40,15 +42,12 @@ $result = $conn->query($sql);
             <p>Review and manage customer loan requests</p>
         </div>
 
-        <?php if(isset($_GET['msg'])): ?>
-            <div id="alert-box" class="alert <?php echo ($_GET['msg'] == 'success') ? 'alert-success' : 'alert-error'; ?>">
-                <?php 
-                    if($_GET['msg'] == 'success') echo "✓ Action completed successfully!";
-                    if($_GET['msg'] == 'error') echo "⚠ Error: Could not update the loan.";
-                ?>
+        <?php if(isset($_GET['msg']) && $_GET['msg'] == 'updated'): ?>
+            <div id="status-msg" style="background: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border: 1px solid #c3e6cb; border-radius: 4px;">
+                <strong>Success!</strong> The loan status has been updated.
             </div>
             <script>
-                setTimeout(() => { document.getElementById('alert-box').style.display = 'none'; }, 3000);
+                setTimeout(() => { document.getElementById('status-msg').style.display = 'none'; }, 3000);
             </script>
         <?php endif; ?>
 
@@ -58,15 +57,11 @@ $result = $conn->query($sql);
                 <button type="submit" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
             </form>
         </div>
-<?php if(isset($_GET['msg']) && $_GET['msg'] == 'updated'): ?>
-        <div id="status-msg" style="background: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border: 1px solid #c3e6cb; border-radius: 4px;">
-            <strong>Success!</strong> The loan status has been updated.
-        </div>
-    <?php endif; ?>
+
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Loan ID</th>
                     <th>Customer</th>
                     <th>Amount</th>
                     <th>Status</th>
@@ -77,7 +72,7 @@ $result = $conn->query($sql);
                 <?php if ($result->num_rows > 0): ?>
                     <?php while($row = $result->fetch_assoc()): ?>
                     <tr>
-                        <td>#<?php echo $row['id']; ?></td>
+                        <td>#<?php echo $row['loan_id']; ?></td>
                         <td><?php echo htmlspecialchars($row['first_name']); ?></td>
                         <td>KES <?php echo number_format($row['amount']); ?></td>
                         <td>
@@ -87,15 +82,15 @@ $result = $conn->query($sql);
                         </td>
                         <td>
                             <?php if($row['status'] == 'Pending'): ?>
-                                <a href="./admin_dashboard.php?id=<?php echo $row['id']; ?>&action=approve" 
+                                <a href="manage_loans.php?id=<?php echo $row['loan_id']; ?>&action=approve" 
                                    class="btn-approve" 
                                    onclick="return confirm('Approve loan for <?php echo $row['first_name']; ?>?')">Approve</a>
                                 
-                                <a href="./admin_dashboard.php?id=<?php echo $row['id']; ?>&action=reject" 
+                                <a href="manage_loans.php?id=<?php echo $row['loan_id']; ?>&action=reject" 
                                    class="btn-reject" 
                                    onclick="return confirm('Reject this loan application?')">Reject</a>
                             <?php else: ?>
-                                <span style="color: #95a5a6; font-style: italic;">No actions</span>
+                                <span style="color: #95a5a6; font-style: italic;">Processed</span>
                             <?php endif; ?>
                         </td>
                     </tr>
