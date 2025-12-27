@@ -2,7 +2,10 @@
 session_start();
 require_once 'config.php'; 
 
-// 1. Search Logic (Fixed with SQL Security)
+if(!isset($_SESSION['admin_logged_in']))
+    { header("Location: admin_login.php"); exit(); }
+
+// 2. SEARCH LOGIC
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $search_query = "";
 if (!empty($search)) {
@@ -10,7 +13,7 @@ if (!empty($search)) {
     $search_query = " WHERE clients_info.first_name LIKE '%$safe_search%' ";
 }
 
-// 2. FIXED SQL: We rename loans.id to 'loan_id' so it doesn't clash with clients_info.id
+// 3. FETCH DATA: Get loans joined with client names
 $sql = "SELECT loans.id AS loan_id, clients_info.first_name, loans.amount, loans.status 
         FROM loans 
         JOIN clients_info ON loans.user_id = clients_info.id 
@@ -33,7 +36,7 @@ $result = $conn->query($sql);
         <a href="admin_dashboard.php">Dashboard</a>
         <a href="view_payments.php">Payment History</a>
         <a href="users.php">Manage Users</a>
-        <a href="../logout.php" style="margin-top: 50px; color: #e74c3c;">Logout</a>
+        <a href="admin_logout.php">Logout</a>
     </div>
 
     <div class="main-content">
@@ -52,7 +55,7 @@ $result = $conn->query($sql);
         <?php endif; ?>
 
         <div style="margin-bottom: 20px;">
-            <form method="GET" action="">
+            <form action="admin_dashboard.php" method="GET">
                 <input type="text" name="search" placeholder="Search by customer name..." value="<?php echo htmlspecialchars($search); ?>" style="padding: 10px; width: 300px; border-radius: 4px; border: 1px solid #ccc;">
                 <button type="submit" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
             </form>
@@ -69,7 +72,7 @@ $result = $conn->query($sql);
                 </tr>
             </thead>
             <tbody>
-                <?php if ($result->num_rows > 0): ?>
+                <?php if ($result && $result->num_rows > 0): ?>
                     <?php while($row = $result->fetch_assoc()): ?>
                     <tr>
                         <td>#<?php echo $row['loan_id']; ?></td>

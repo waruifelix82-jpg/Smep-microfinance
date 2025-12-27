@@ -31,7 +31,7 @@ $result = $conn->query($sql);
         <a href="admin_dashboard.php">Dashboard</a>
         <a href="view_payments.php" class="active">Payment History</a>
         <a href="users.php">Manage Users</a>
-        <a href="../logout.php" style="margin-top: 50px; color: #e74c3c;">Logout</a>
+        
     </div>
 
     <div class="main-content">

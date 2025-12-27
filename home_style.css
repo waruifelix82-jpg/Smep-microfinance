@@ -5,6 +5,42 @@
     --white: #ffffff;
 }
 
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Stay on top of everything */
+}
+
+/* The spinning circle */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db; /* SMEP Blue */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Animation logic */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#preloader p {
+    margin-top: 15px;
+    font-family: Arial, sans-serif;
+    color: #555;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 html { scroll-behavior: smooth; }
 
@@ -48,3 +84,59 @@ html { scroll-behavior: smooth; }
 .card-body p { color: var(--text-light); line-height: 1.6; }
 
 .footer { text-align: center; padding: 40px; background: var(--navy); color: white; font-size: 14px; }
+.hero-container {
+    position: relative; /* This is the "anchor" for the arrow */
+    width: 100%;
+    height: 80vh; /* Adjust height as needed */
+    background: url('your-image.jpg') no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 20px; /* This pushes it to the bottom edge of the image */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5;
+}
+
+.arrow {
+    width: 15px;
+    height: 15px;
+    border-right: 3px solid #ffffff; /* White arrow to stand out on image */
+    border-bottom: 3px solid #ffffff;
+    transform: rotate(45deg);
+    margin: 5px auto;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) rotate(45deg);
+    }
+    40% {
+        transform: translateY(-10px) rotate(45deg);
+    }
+    60% {
+        transform: translateY(-5px) rotate(45deg);
+    }
+}
+.bell-alert span {
+    display: inline-block;
+    animation: ring 2s infinite;
+}
+
+@keyframes ring {
+    0% { transform: rotate(0); }
+    10% { transform: rotate(15deg); }
+    20% { transform: rotate(-15deg); }
+    30% { transform: rotate(10deg); }
+    40% { transform: rotate(-10deg); }
+    50% { transform: rotate(0); }
+    100% { transform: rotate(0); }
+}
