@@ -1,5 +1,5 @@
 <?php
-// 1. IMPORT PHPMAILER (Make sure these files are in your 'phpmailer' folder)
+// 1. IMPORT PHPMAILER
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -11,7 +11,7 @@ include "db_connect.php";
 session_start();
 
 $message = "";
-$message_type = "error"; // Default to error (red)
+$message_type = "error"; 
 
 if (isset($_POST['register'])) {
     $first_name  = trim($_POST['first_name']);
@@ -38,32 +38,56 @@ if (isset($_POST['register'])) {
             $stmt->bind_param("sssss", $first_name, $second_name, $email, $phone, $password_hash);
 
             if ($stmt->execute()) {
-                // SUCCESS! SET COLOR TO GREEN
-                $message = "Registration successful! A welcome email has been sent to your inbox.";
+                $message = "Registration successful! A welcome email has been sent.";
                 $message_type = "success"; 
-
+// Add the email as a "GET" parameter
+$login_url = "http://localhost/smep%20microfinance/login.php?email=" . urlencode($email);
                 // --- SEND EMAIL START ---
                 $mail = new PHPMailer(true);
                 try {
+                    // SMTP Settings
                     $mail->isSMTP();
                     $mail->Host       = 'smtp.gmail.com';
                     $mail->SMTPAuth   = true;
-                    $mail->Username   = 'waruifelix82@gmail.com'; // Your Gmail
-                    $mail->Password   = 'your-app-password';       // Your 16-digit App Password
+                    $mail->Username   = 'waruifelix82@gmail.com'; 
+                    $mail->Password   = 'ypit qxnf kltw pesn'; 
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port       = 587;
 
-                    $mail->setFrom('your-smep-email@gmail.com', 'SMEP Microfinance');
+                    // Recipients
+                    $mail->setFrom('waruifelix82@gmail.com', 'SMEP Microfinance');
                     $mail->addAddress($email); 
 
+                    // Email Content
+                    $login_url = "http://localhost/smep%20microfinance/login.php";
                     $mail->isHTML(true);
                     $mail->Subject = 'Welcome to SMEP Microfinance';
-                    $mail->Body    = "<h2>Hello $first_name!</h2>
-                                      <p>You have successfully registered to <b>SMEP Microfinance</b> for free.</p>
-                                      <p>You can now log in to access your dashboard.</p>";
+                    
+                    // HTML Email Template
+                    $mail->Body = "
+                        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px;'>
+                            <h2 style='color: #2c3e50; text-align: center;'>Welcome to SMEP, $first_name!</h2>
+                            <p>Your account has been created successfully. We are happy to have you join our microfinance community.</p>
+                            <p>You can now apply for loans and manage your savings directly from your dashboard.</p>
+                            <br>
+                            <div style='text-align: center;'>
+                                <a href='$login_url' style='background-color: #27ae60; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>
+                                    Login to My Dashboard
+                                </a>
+                            </div>
+                            <br>
+                            <p style='font-size: 12px; color: #7f8c8d; text-align: center;'>
+                                If the button above doesn't work, copy this link: <br>
+                                <a href='$login_url'>$login_url</a>
+                            </p>
+                            <hr style='border: 0; border-top: 1px solid #eee; margin: 20px 0;'>
+                            <p style='font-size: 11px; color: #999; text-align: center;'>SMEP Microfinance - Your Growth, Our Priority.</p>
+                        </div>
+                    ";
+
                     $mail->send();
                 } catch (Exception $e) {
-                    // Email failed, but DB insertion was successful.
+                    // Fail silently or log error
                 }
                 // --- SEND EMAIL END ---
 

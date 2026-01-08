@@ -45,27 +45,39 @@ $result = $stmt->get_result();
     <?php if ($result->num_rows > 0): ?>
         <table>
             <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Purpose</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while($row = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo date('M d, Y', strtotime($row['created_at'])); ?></td>
-                        <td>Ksh <?php echo number_format($row['amount'], 2); ?></td>
-                        <td><?php echo htmlspecialchars($row['purpose']); ?></td>
-                        <td>
-                            <span class="status-<?php echo strtolower($row['status']); ?>">
-                                <?php echo ucfirst($row['status']); ?>
-                            </span>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Purpose</th>
+        <th>Status</th>
+        <th>Action</th> </tr>
+</thead>
+
+<tbody>
+    <?php while($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td><?php echo date('M d, Y', strtotime($row['created_at'])); ?></td>
+            <td>Ksh <?php echo number_format($row['amount'], 2); ?></td>
+            <td><?php echo htmlspecialchars($row['purpose']); ?></td>
+            <td>
+                <span class="status-<?php echo strtolower($row['status']); ?>">
+                    <?php echo ucfirst($row['status']); ?>
+                </span>
+            </td>
+           <td>
+    <?php if ($row['status'] == 'approved' || $row['status'] == 'disbursed'): ?>
+        <a href="generate_receipt.php?loan_id=<?php echo $row['id']; ?>" 
+           target="_blank" 
+           style="background-color: #27ae60; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;">
+           📄 Download Receipt
+        </a>
+    <?php else: ?>
+        <span style="color: #999;">Pending Approval</span>
+    <?php endif; ?>
+</td>
+        </tr>
+    <?php endwhile; ?>
+</tbody>
         </table>
     <?php else: ?>
         <p>You haven't applied for any loans yet.</p>

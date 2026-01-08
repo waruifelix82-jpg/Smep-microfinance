@@ -29,7 +29,7 @@ $result = $conn->query($sql);
         <a href="admin_dashboard.php">Dashboard</a>
         <a href="view_payments.php">Payment History</a>
         <a href="users.php" class="active">Manage Users</a>
-        <a href="../logout.php" style="margin-top: 50px; color: #e74c3c;">Logout</a>
+        <a href="admin_logout.php">Logout</a>
     </div>
 
     <div class="main-content">

@@ -107,9 +107,9 @@ html { scroll-behavior: smooth; }
 
 .arrow {
     width: 15px;
-    height: 15px;
-    border-right: 3px solid #ffffff; /* White arrow to stand out on image */
-    border-bottom: 3px solid #ffffff;
+    height: 10px;
+    border-right: 3px solid #3505f5; /* White arrow to stand out on image */
+    border-bottom: 3px solid #3505f5;
     transform: rotate(45deg);
     margin: 5px auto;
     animation: bounce 2s infinite;

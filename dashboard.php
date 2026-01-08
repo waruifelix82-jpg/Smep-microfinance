@@ -51,7 +51,7 @@ $has_approved_loan = ($notif_result->num_rows > 0);
 
 <div id="preloader">
     <div class="spinner"></div>
-    <p>Loading Dashboard...</p>
+    <p>Loading ...</p>
 </div>
 
     <nav class="navbar">
@@ -61,6 +61,7 @@ $has_approved_loan = ($notif_result->num_rows > 0);
             <a href="#services">What We Do</a>
              <a href="./apply_loan.php" class="btn-apply_loan">Apply for a loan</a>
              <a href="./repay_loan.php" class="btn-Repay">Repay loan</a>
+             <a href="./view_loans.php" class="btn-view_loans">view loans</a>
             <a href="./LOGIN/Index.php" class="btn-login">Login</a>
             <a href="./register.php" class="btn-register">Join Us</a>
             
@@ -145,7 +146,7 @@ $has_approved_loan = ($notif_result->num_rows > 0);
         var loader = document.getElementById("preloader");
         
         // Add a slight fade-out effect
-        loader.style.transition = "opacity 4.5s ease";
+        loader.style.transition = "opacity 8.5s ease";
         loader.style.opacity = "0";
         
         // Remove it from the DOM after fading so it doesn't block clicks
@@ -156,8 +157,8 @@ $has_approved_loan = ($notif_result->num_rows > 0);
     window.onscroll = function() {
     var indicator = document.querySelector(".scroll-indicator");
     if (window.pageYOffset > 50) {
-        indicator.style.opacity = "0";
-        indicator.style.transition = "0.5s";
+        indicator.style.opacity = "4";
+        indicator.style.transition = "1.5s";
     } else {
         indicator.style.opacity = "1";
     }

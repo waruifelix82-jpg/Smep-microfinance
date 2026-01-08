@@ -15,7 +15,9 @@
 <form method="POST" action="login_process.php">
         <form>
             <label>Email</label>
-            <input type="email" name="email" placeholder="Enter your email" required>
+            <input type="email" name="email" 
+       value="<?php echo isset($_GET['email']) ? htmlspecialchars($_GET['email']) : ''; ?>" 
+       placeholder="Enter your email" required>
 
             <label>Password</label>
             <input type="password" name="password" placeholder="Enter your password" required>
