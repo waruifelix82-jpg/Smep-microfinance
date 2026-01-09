@@ -38,10 +38,9 @@ if (isset($_POST['register'])) {
             $stmt->bind_param("sssss", $first_name, $second_name, $email, $phone, $password_hash);
 
             if ($stmt->execute()) {
-                $message = "Registration successful! A welcome email has been sent.";
+                $message = "Registration successful! Welcome email sent.";
                 $message_type = "success"; 
-// Add the email as a "GET" parameter
-$login_url = "http://localhost/smep%20microfinance/login.php?email=" . urlencode($email);
+
                 // --- SEND EMAIL START ---
                 $mail = new PHPMailer(true);
                 try {
@@ -53,41 +52,47 @@ $login_url = "http://localhost/smep%20microfinance/login.php?email=" . urlencode
                     $mail->Password   = 'ypit qxnf kltw pesn'; 
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port       = 587;
+                    
+                    // Fix for XAMPP SSL Certificate issues
+                    $mail->SMTPOptions = array(
+                        'ssl' => array(
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true
+                        )
+                    );
 
                     // Recipients
                     $mail->setFrom('waruifelix82@gmail.com', 'SMEP Microfinance');
                     $mail->addAddress($email); 
 
-                    // Email Content
-                    $login_url = "http://localhost/smep%20microfinance/login.php";
+                    // THE FIX: Using your laptop IP so your phone can find the server
+                    $login_url = "http://192.168.57.20/smep%20microfinance/login.php";
+
                     $mail->isHTML(true);
                     $mail->Subject = 'Welcome to SMEP Microfinance';
                     
-                    // HTML Email Template
                     $mail->Body = "
                         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px;'>
                             <h2 style='color: #2c3e50; text-align: center;'>Welcome to SMEP, $first_name!</h2>
                             <p>Your account has been created successfully. We are happy to have you join our microfinance community.</p>
-                            <p>You can now apply for loans and manage your savings directly from your dashboard.</p>
-                            <br>
-                            <div style='text-align: center;'>
+                            <div style='text-align: center; margin: 25px 0;'>
                                 <a href='$login_url' style='background-color: #27ae60; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>
                                     Login to My Dashboard
                                 </a>
                             </div>
-                            <br>
-                            <p style='font-size: 12px; color: #7f8c8d; text-align: center;'>
-                                If the button above doesn't work, copy this link: <br>
+                            <p style='text-align: center; font-size: 12px; color: #7f8c8d;'>
+                                If the button doesn't work, click the link below:<br>
                                 <a href='$login_url'>$login_url</a>
                             </p>
                             <hr style='border: 0; border-top: 1px solid #eee; margin: 20px 0;'>
                             <p style='font-size: 11px; color: #999; text-align: center;'>SMEP Microfinance - Your Growth, Our Priority.</p>
-                        </div>
-                    ";
+                        </div>";
 
                     $mail->send();
                 } catch (Exception $e) {
-                    // Fail silently or log error
+                    // Silently log or display error if email fails
+                    $message = "Registration successful, but email failed: {$mail->ErrorInfo}";
                 }
                 // --- SEND EMAIL END ---
 
