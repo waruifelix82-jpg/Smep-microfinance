@@ -38,7 +38,7 @@ if (isset($_POST['register'])) {
             $stmt->bind_param("sssss", $first_name, $second_name, $email, $phone, $password_hash);
 
             if ($stmt->execute()) {
-                $message = "Registration successful! Welcome email sent.";
+                $message = "Registration successful!";
                 $message_type = "success"; 
 
                 // --- SEND EMAIL START ---
@@ -67,8 +67,7 @@ if (isset($_POST['register'])) {
                     $mail->addAddress($email); 
 
                     // THE FIX: Using your laptop IP so your phone can find the server
-                    $login_url = "http://192.168.57.20/smep%20microfinance/login.php";
-
+                    
                     $mail->isHTML(true);
                     $mail->Subject = 'Welcome to SMEP Microfinance';
                     

@@ -50,11 +50,25 @@ html { scroll-behavior: smooth; }
     padding: 20px 8%; background: var(--white);
     position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
+
 .logo { font-size: 22px; font-weight: 800; color: var(--navy); }
 .logo span { color: var(--primary); }
 .nav-links a { text-decoration: none; margin-left: 25px; color: var(--navy); font-weight: 500; }
 .btn-register { background: var(--primary); color: white !important; padding: 10px 20px; border-radius: 8px; }
+.nav-links a {
+    text-decoration: none;
+    color: #333; /* Your default text color */
+    padding: 8px 15px;
+    transition: all 0.3s ease; /* This makes the hover look smooth */
+    display: inline-block;
+}
 
+/* The Hover Effect */
+.nav-links a:hover {
+    background-color: #4405e5; /* The purple color you wanted */
+    color: #ffffff;            /* White text so it's readable */
+    border-radius: 5px;        /* Rounds the corners slightly */
+}
 /* Hero Section */
 .hero {
     height: 80vh; background: linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), 

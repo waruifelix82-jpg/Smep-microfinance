@@ -51,7 +51,7 @@ $has_approved_loan = ($notif_result->num_rows > 0);
 
 <div id="preloader">
     <div class="spinner"></div>
-    <p>Loading ...</p>
+    <p>please wait ...</p>
 </div>
 
     <nav class="navbar">
