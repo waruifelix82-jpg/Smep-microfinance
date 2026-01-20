@@ -65,7 +65,6 @@ $has_approved_loan = ($notif_result->num_rows > 0);
             <a href="./LOGIN/Index.php" class="btn-login">Login</a>
             <a href="./register.php" class="btn-register">Join Us</a>
             
-           
         </div>
     </nav>
 
